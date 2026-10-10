@@ -1,0 +1,1673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>AerOps</title>
+<meta name="description" content="AerOps is an early-stage aviation operations and technology studio building supply-chain analytics, spare-parts tracking, and operational tools for airlines and MROs.">
+<meta property="og:title" content="AerOps">
+<meta property="og:description" content="Aviation operations and technology, built by people who work in the hangar.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://aerops.space">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230a1420'/%3E%3Cpath d='M4 16h24M16 4v24M8 8l16 16M24 8L8 24' stroke='%23d4751f' stroke-width='1' fill='none'/%3E%3Ccircle cx='16' cy='16' r='6' fill='none' stroke='%23f1e8d4' stroke-width='1'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!--
+AerOps — static single-file site. All HTML/CSS/JS inline.
+Not legal advice; privacy policy should be reviewed before relying on it.
+Edit CONFIG below to update email, status badges, team, solutions.
+-->
+<style>
+  :root{
+    --ink:#0a1420;
+    --ink-2:#0f1c2d;
+    --ink-3:#152638;
+    --paper:#f1e8d4;
+    --paper-2:#e8dcc0;
+    --paper-dim:#b8a98a;
+    --amber:#d4751f;
+    --amber-dim:#8a4d14;
+    --teal:#5c8ea6;
+    --teal-dim:#3a5a6b;
+    --rule:rgba(241,232,212,0.14);
+    --rule-strong:rgba(241,232,212,0.28);
+    --warn:#c94a2a;
+    --ok:#6b8e4e;
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--ink);color:var(--paper);font-family:'IBM Plex Sans',system-ui,sans-serif;font-weight:300;line-height:1.55;-webkit-font-smoothing:antialiased}
+  body{
+    background-image:
+      radial-gradient(ellipse at 15% -10%,rgba(212,117,31,0.08),transparent 55%),
+      radial-gradient(ellipse at 90% 110%,rgba(92,142,166,0.06),transparent 50%),
+      linear-gradient(var(--ink),var(--ink));
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none}
+  a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  .skip{position:absolute;left:-9999px;top:0;background:var(--amber);color:var(--ink);padding:8px 16px;font-weight:600;z-index:1000}
+  .skip:focus{left:16px;top:16px}
+
+  /* Blueprint grid background on hero/sections */
+  .grid-bg{
+    position:relative;
+  }
+  .grid-bg::before{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background-image:
+      linear-gradient(var(--rule) 1px,transparent 1px),
+      linear-gradient(90deg,var(--rule) 1px,transparent 1px);
+    background-size:48px 48px;
+    mask-image:linear-gradient(180deg,black 0%,black 70%,transparent 100%);
+    opacity:0.5;
+  }
+
+  /* Header */
+  header{
+    position:sticky;top:0;z-index:50;
+    background:rgba(10,20,32,0.88);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--rule);
+  }
+  .nav{
+    max-width:1280px;margin:0 auto;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 24px;
+  }
+  .wordmark{
+    font-family:'DM Serif Display',serif;
+    font-size:26px;letter-spacing:-0.02em;
+    display:inline-flex;align-items:baseline;gap:2px;
+    color:var(--paper);
+  }
+  .wordmark .dot{color:var(--amber);font-family:'IBM Plex Mono',monospace;font-size:18px;transform:translateY(-2px)}
+  .nav-links{display:none;gap:28px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.08em;text-transform:uppercase}
+  .nav-links a{color:var(--paper-dim);padding:4px 0;border-bottom:1px solid transparent;transition:color .15s,border-color .15s}
+  .nav-links a:hover,.nav-links a.active{color:var(--paper);border-bottom-color:var(--amber)}
+  .burger{background:none;border:1px solid var(--rule);color:var(--paper);padding:8px 10px;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.1em}
+  .burger:hover{border-color:var(--amber);color:var(--amber)}
+  .mobile-menu{display:none;border-top:1px solid var(--rule);background:var(--ink-2)}
+  .mobile-menu.open{display:block}
+  .mobile-menu a{display:block;padding:16px 24px;border-bottom:1px solid var(--rule);font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--paper-dim)}
+  .mobile-menu a:last-child{border-bottom:none}
+  @media(min-width:860px){
+    .nav-links{display:flex}
+    .burger{display:none}
+    .mobile-menu{display:none !important}
+  }
+
+  main{min-height:60vh}
+  .page{display:none;animation:fadeIn .3s ease}
+  .page.active{display:block}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @media (prefers-reduced-motion:reduce){.page{animation:none}}
+
+  /* Section wrapper */
+  .wrap{max-width:1280px;margin:0 auto;padding:0 24px}
+
+  /* ============ HERO ============ */
+  .hero{
+    position:relative;overflow:hidden;
+    padding:72px 0 96px;
+    border-bottom:1px solid var(--rule);
+  }
+  .hero-inner{
+    display:grid;grid-template-columns:1fr;gap:56px;
+    position:relative;z-index:2;
+  }
+  @media(min-width:960px){
+    .hero-inner{grid-template-columns:1.1fr 1fr;align-items:center;gap:48px}
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;letter-spacing:0.18em;text-transform:uppercase;
+    color:var(--amber);
+    display:inline-flex;align-items:center;gap:12px;
+    margin-bottom:28px;
+  }
+  .eyebrow::before{content:"";width:28px;height:1px;background:var(--amber)}
+  h1.display{
+    font-family:'DM Serif Display',serif;
+    font-weight:400;font-size:clamp(34px,5vw,58px);
+    line-height:1.05;letter-spacing:-0.02em;
+    color:var(--paper);
+    text-wrap:balance;
+    margin-bottom:24px;
+  }
+  h1.display em{font-style:italic;color:var(--amber)}
+  .lede{
+    font-size:15px;line-height:1.7;color:var(--paper-dim);
+    max-width:54ch;margin-bottom:32px;
+  }
+  .cta-row{display:flex;flex-wrap:wrap;gap:14px}
+  .btn{
+    display:inline-flex;align-items:center;gap:10px;
+    padding:14px 22px;
+    font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;
+    border:1px solid var(--paper);color:var(--paper);background:transparent;
+    cursor:pointer;transition:all .15s;
+  }
+  .btn:hover{background:var(--paper);color:var(--ink)}
+  .btn.primary{border-color:var(--amber);color:var(--amber)}
+  .btn.primary:hover{background:var(--amber);color:var(--ink)}
+  .btn .arrow{display:inline-block;transition:transform .15s}
+  .btn:hover .arrow{transform:translateX(3px)}
+
+  /* Hero technical illustration */
+  .hero-art{
+    position:relative;aspect-ratio:1/1;max-width:560px;margin:0 auto;
+  }
+  .hero-art svg{width:100%;height:100%;display:block}
+
+  /* Coordinate ticker beneath hero */
+  .coord-strip{
+    margin-top:72px;padding:16px 0;
+    border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.1em;
+    color:var(--paper-dim);
+    display:flex;flex-wrap:wrap;gap:32px;justify-content:space-between;
+  }
+  .coord-strip span strong{color:var(--amber);font-weight:500}
+
+  /* ============ SECTION HEADERS ============ */
+  section{padding:88px 0;border-bottom:1px solid var(--rule);position:relative}
+  .sect-head{
+    display:grid;grid-template-columns:1fr;gap:12px;
+    margin-bottom:56px;
+    padding-bottom:20px;border-bottom:1px solid var(--rule-strong);
+  }
+  @media(min-width:860px){.sect-head{grid-template-columns:200px 1fr;gap:48px;align-items:end}}
+  .sect-num{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;letter-spacing:0.14em;color:var(--amber);
+  }
+  .sect-num::after{content:"";display:block;width:40px;height:1px;background:var(--amber);margin-top:8px}
+  h2{
+    font-family:'DM Serif Display',serif;
+    font-weight:400;font-size:clamp(24px,3.2vw,34px);line-height:1.15;letter-spacing:-0.01em;
+    color:var(--paper);text-wrap:balance;
+  }
+  h3{
+    font-family:'DM Serif Display',serif;font-weight:400;font-size:22px;line-height:1.2;
+    color:var(--paper);margin-bottom:12px;
+  }
+
+  /* ============ WHAT WE BUILD (ruled list) ============ */
+  .focus-list{display:grid;grid-template-columns:1fr;gap:0}
+  .focus-row{
+    display:grid;grid-template-columns:1fr;gap:12px;
+    padding:28px 0;border-top:1px solid var(--rule);
+  }
+  .focus-row:first-child{border-top:none}
+  @media(min-width:760px){
+    .focus-row{grid-template-columns:60px 1fr 1fr auto;gap:32px;align-items:start}
+  }
+  .focus-row .idx{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--amber);letter-spacing:0.1em;padding-top:4px}
+  .focus-row h3{font-size:20px;margin-bottom:6px}
+  .focus-row p{color:var(--paper-dim);font-size:14px}
+  .focus-coming{opacity:0.78;border-top-style:dashed !important}
+  .focus-coming h3{color:var(--amber)}
+  .badge-link{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.08em;color:var(--amber);border:1px solid var(--amber);padding:6px 10px;text-transform:uppercase;white-space:nowrap;transition:all .15s}
+  .badge-link:hover{background:var(--amber);color:var(--ink)}
+
+  /* ============ STATS STRIP (instrument style) ============ */
+  .stats{
+    display:grid;grid-template-columns:repeat(2,1fr);gap:0;
+    border:1px solid var(--rule-strong);
+    background:var(--ink-2);
+    margin:48px 0;
+  }
+  @media(min-width:760px){.stats{grid-template-columns:repeat(4,1fr)}}
+  .stat{
+    padding:28px 24px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);
+    position:relative;
+  }
+  .stat:last-child{border-right:none}
+  @media(min-width:760px){
+    .stat{border-bottom:none}
+    .stat:nth-child(2n){border-right:1px solid var(--rule)}
+  }
+  .stat .lbl{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--paper-dim);margin-bottom:14px}
+  .stat .val{font-family:'DM Serif Display',serif;font-size:32px;line-height:1;color:var(--paper);margin-bottom:8px}
+  .stat .val .unit{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--amber);margin-left:4px;letter-spacing:0.05em}
+  .stat .note{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--paper-dim);letter-spacing:0.08em}
+  .stat .dial{position:absolute;top:16px;right:16px;opacity:0.6}
+
+  /* ============ STATUS BADGES ============ */
+  .badge{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;
+    padding:4px 10px;border:1px solid currentColor;
+    color:var(--paper-dim);
+  }
+  .badge::before{content:"";width:6px;height:6px;background:currentColor;display:inline-block}
+  .badge.LIVE{color:var(--ok)}
+  .badge.PROTOTYPE{color:var(--amber)}
+  .badge.CONCEPT{color:var(--teal)}
+
+  .legend{
+    display:grid;grid-template-columns:1fr;gap:16px;
+    margin:48px 0;padding:24px;
+    border:1px solid var(--rule);background:var(--ink-2);
+  }
+  @media(min-width:760px){.legend{grid-template-columns:repeat(3,1fr);gap:32px}}
+  .legend .item{display:flex;flex-direction:column;gap:8px}
+  .legend .item p{font-size:13px;color:var(--paper-dim)}
+
+  /* Status at a glance table */
+  .status-tbl{width:100%;border-collapse:collapse;margin-top:16px;font-size:14px}
+  .status-tbl th,.status-tbl td{text-align:left;padding:14px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+  .status-tbl th{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--paper-dim);font-weight:500}
+  .status-tbl td.cap{color:var(--paper)}
+  .status-tbl td.area{color:var(--paper-dim);font-family:'IBM Plex Mono',monospace;font-size:12px}
+
+  /* ============ SOLUTIONS ============ */
+  .solution{
+    display:grid;grid-template-columns:1fr;gap:40px;
+    padding:56px 0;border-top:1px solid var(--rule);
+  }
+  .solution:first-of-type{border-top:none;padding-top:0}
+  @media(min-width:960px){
+    .solution{grid-template-columns:1fr 1fr;gap:72px;align-items:start}
+    .solution.reverse > .sol-art{order:-1}
+  }
+  .sol-head{display:flex;align-items:center;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+  .sol-head h3{margin:0;font-size:24px}
+  .sol-section-title{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--amber);margin:28px 0 12px}
+  .sol-problem{
+    padding:16px 20px;border-left:2px solid var(--amber);background:rgba(212,117,31,0.05);
+    font-size:14px;color:var(--paper);margin-bottom:20px;
+  }
+  .cap-list{list-style:none;padding:0;margin:0}
+  .cap-list li{
+    display:grid;grid-template-columns:1fr auto;gap:16px;
+    padding:14px 0;border-bottom:1px solid var(--rule);align-items:center;
+  }
+  .cap-list li:last-child{border-bottom:none}
+  .cap-list .cap-name{font-size:14px;color:var(--paper)}
+  .cap-list .cap-coming{border-top:1px dashed var(--rule-strong);border-bottom:none;padding-top:16px;margin-top:4px}
+  .cap-coming-text{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.08em;color:var(--amber);text-transform:uppercase}
+  .cap-coming-tick{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--amber-dim);letter-spacing:0.1em}
+
+  .sol-art{
+    padding:24px;background:var(--ink-2);border:1px solid var(--rule);
+    position:relative;
+  }
+  .sol-art::before{
+    content:attr(data-fig);
+    position:absolute;top:12px;left:16px;
+    font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.14em;color:var(--amber);
+  }
+  .sol-art svg{width:100%;height:auto;display:block;margin-top:20px}
+  .sol-art .caption{
+    font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--paper-dim);
+    margin-top:16px;padding-top:12px;border-top:1px solid var(--rule);letter-spacing:0.06em;
+  }
+
+  /* How we approach it */
+  .approach{
+    display:grid;grid-template-columns:1fr;gap:24px;
+    margin-top:72px;padding-top:56px;border-top:1px solid var(--rule-strong);
+  }
+  @media(min-width:760px){.approach{grid-template-columns:repeat(3,1fr);gap:40px}}
+  .approach-step{position:relative;padding-top:36px}
+  .approach-step .num{
+    position:absolute;top:0;left:0;
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.1em;color:var(--amber);
+  }
+  .approach-step .num::after{content:"";display:block;width:24px;height:1px;background:var(--amber);margin-top:8px}
+  .approach-step h4{font-family:'DM Serif Display',serif;font-weight:400;font-size:22px;margin-bottom:10px;color:var(--paper)}
+  .approach-step p{font-size:14px;color:var(--paper-dim)}
+
+  /* ============ ROADMAP ============ */
+  .roadmap{display:grid;grid-template-columns:1fr;gap:0;margin-top:16px;border-top:1px solid var(--rule)}
+  .road-row{
+    display:grid;grid-template-columns:1fr;gap:12px;
+    padding:28px 0;border-bottom:1px solid var(--rule);align-items:start;
+    position:relative;transition:background .2s;
+  }
+  .road-row:hover{background:rgba(212,117,31,0.03)}
+  @media(min-width:760px){
+    .road-row{grid-template-columns:140px 1fr auto;gap:40px;align-items:center}
+  }
+  .road-when{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.12em;
+    color:var(--amber);text-transform:uppercase;position:relative;padding-left:16px;
+  }
+  .road-when::before{
+    content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);
+    width:6px;height:6px;background:var(--amber);
+  }
+  .road-what h4{font-family:'DM Serif Display',serif;font-weight:400;font-size:18px;color:var(--paper);margin-bottom:6px}
+  .road-what p{font-size:13px;color:var(--paper-dim);line-height:1.6}
+
+  /* ============ ABOUT / TEAM ============ */
+  .about-grid{display:grid;grid-template-columns:1fr;gap:48px}
+  @media(min-width:860px){.about-grid{grid-template-columns:1fr 1fr;gap:72px}}
+  .about-block h3{font-family:'DM Serif Display',serif;font-weight:400;font-size:24px;margin-bottom:16px;color:var(--paper)}
+  .about-block p{color:var(--paper-dim);font-size:15px;margin-bottom:14px}
+  .about-block .tag{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.14em;color:var(--amber);text-transform:uppercase;margin-bottom:14px;display:block}
+
+  .team{margin-top:72px;padding-top:56px;border-top:1px solid var(--rule-strong)}
+  .team-grid{display:grid;grid-template-columns:1fr;gap:32px;margin-top:40px;max-width:640px}
+  .team-card{
+    padding:32px;border:1px solid var(--rule);background:var(--ink-2);
+    display:flex;flex-direction:column;gap:16px;position:relative;overflow:hidden;
+  }
+  .team-card::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--amber),transparent);
+  }
+  .team-ident{display:flex;align-items:center;gap:16px}
+  .team-mono{
+    width:64px;height:64px;flex-shrink:0;
+    border:1px solid var(--amber);display:flex;align-items:center;justify-content:center;
+    font-family:'DM Serif Display',serif;font-size:22px;color:var(--amber);
+    position:relative;
+  }
+  .team-mono::before,.team-mono::after{
+    content:"";position:absolute;background:var(--amber);
+  }
+  .team-mono::before{top:-1px;left:-1px;width:8px;height:1px}
+  .team-mono::after{top:-1px;left:-1px;width:1px;height:8px}
+  .team-info h4{font-family:'DM Serif Display',serif;font-weight:400;font-size:22px;color:var(--paper);line-height:1.1;margin-bottom:4px}
+  .team-info .role{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--amber)}
+  .team-bio{font-size:14px;color:var(--paper-dim);line-height:1.6}
+  .team-links{display:flex;gap:16px;flex-wrap:wrap;padding-top:12px;border-top:1px solid var(--rule);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.08em}
+  .team-links a{color:var(--paper-dim);display:inline-flex;align-items:center;gap:6px}
+  .team-links a:hover{color:var(--amber)}
+
+  /* ============ CONTACT ============ */
+  .contact-grid{display:grid;grid-template-columns:1fr;gap:48px}
+  @media(min-width:960px){.contact-grid{grid-template-columns:1fr 1.1fr;gap:72px}}
+  .contact-info h3{font-family:'DM Serif Display',serif;font-weight:400;font-size:26px;margin-bottom:16px}
+  .contact-info p{color:var(--paper-dim);margin-bottom:24px;font-size:15px}
+  .contact-detail{padding:16px 0;border-top:1px solid var(--rule);display:grid;grid-template-columns:120px 1fr;gap:16px;align-items:center;font-size:14px}
+  .contact-detail:last-of-type{border-bottom:1px solid var(--rule)}
+  .contact-detail .k{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--paper-dim)}
+  .copy-btn{margin-top:20px}
+
+  form{display:grid;gap:20px}
+  .field{display:grid;gap:8px}
+  .field label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--paper-dim)}
+  .field input,.field select,.field textarea{
+    background:var(--ink-2);border:1px solid var(--rule-strong);color:var(--paper);
+    padding:12px 14px;font-family:'IBM Plex Sans',sans-serif;font-size:15px;
+    border-radius:0;
+  }
+  .field textarea{resize:vertical;min-height:120px;font-family:inherit}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--amber);outline:none}
+  .field.err input,.field.err select,.field.err textarea{border-color:var(--warn)}
+  .err-msg{color:var(--warn);font-size:12px;font-family:'IBM Plex Mono',monospace;display:none}
+  .field.err .err-msg{display:block}
+  .form-row{display:grid;grid-template-columns:1fr;gap:20px}
+  @media(min-width:600px){.form-row{grid-template-columns:1fr 1fr}}
+  .form-note{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--paper-dim);letter-spacing:0.05em;line-height:1.6}
+  .confirm{display:none;padding:16px 20px;border:1px solid var(--ok);color:var(--ok);background:rgba(107,142,78,0.08);font-size:14px}
+  .confirm.show{display:block}
+  .confirm button{background:none;border:1px solid var(--ok);color:var(--ok);padding:6px 12px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;margin-top:10px;cursor:pointer}
+
+  /* ============ PRIVACY ============ */
+  .privacy{max-width:720px}
+  .privacy h3{font-family:'DM Serif Display',serif;font-weight:400;font-size:22px;margin:32px 0 12px;color:var(--paper)}
+  .privacy p{font-size:15px;color:var(--paper-dim);margin-bottom:14px}
+  .privacy .meta{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--paper-dim);letter-spacing:0.08em;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);margin-bottom:32px}
+
+  /* ============ FOOTER ============ */
+  footer{
+    padding:56px 0 32px;background:var(--ink-2);border-top:1px solid var(--rule-strong);
+    position:relative;overflow:hidden;
+  }
+  footer::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:1px;
+    background:linear-gradient(90deg,transparent,var(--amber),transparent);
+  }
+  .footer-grid{display:grid;grid-template-columns:1fr;gap:40px}
+  @media(min-width:760px){.footer-grid{grid-template-columns:2fr 1fr 1fr 1fr;gap:48px}}
+  .footer-brand .wordmark{font-size:28px;margin-bottom:12px}
+  .footer-brand p{font-size:13px;color:var(--paper-dim);max-width:36ch;line-height:1.6}
+  .footer-col h5{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--amber);margin-bottom:16px}
+  .footer-col a{display:block;color:var(--paper-dim);padding:5px 0;font-size:13px;font-family:'IBM Plex Mono',monospace;letter-spacing:0.05em}
+  .footer-col a:hover{color:var(--paper)}
+  .footer-bottom{
+    margin-top:48px;padding-top:24px;border-top:1px solid var(--rule);
+    display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
+    font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--paper-dim);letter-spacing:0.05em;
+  }
+
+  /* ============ MOBILE REFINEMENTS ============ */
+  @media (max-width:640px){
+    .wrap{padding:0 18px}
+    .nav{padding:12px 18px}
+    .wordmark{font-size:22px}
+    .hero{padding:48px 0 56px}
+    section{padding:56px 0}
+    .sect-head{margin-bottom:36px;padding-bottom:16px}
+    h1.display{margin-bottom:20px}
+    .lede{font-size:14px;margin-bottom:24px}
+    .cta-row{gap:10px}
+    .btn{padding:12px 16px;font-size:11px;flex:1 1 auto;justify-content:center}
+    .hero-art{max-width:320px}
+    .coord-strip{gap:14px;font-size:10px;padding:12px 0;margin-top:48px}
+    .stats{margin:32px 0}
+    .stat{padding:20px 16px}
+    .stat .val{font-size:28px}
+    .focus-row{padding:20px 0;gap:8px}
+    .focus-row h3{font-size:17px}
+    .focus-row p{font-size:13px}
+    .fleet-strip{padding:24px 18px;margin:48px 0;gap:24px}
+    .legend{padding:18px;margin:32px 0}
+    .status-tbl-wrap{overflow-x:auto;margin:0 -18px;padding:0 18px}
+    .status-tbl{min-width:420px;font-size:13px}
+    .status-tbl th,.status-tbl td{padding:12px 10px}
+    .spec-strip{margin:48px 0;grid-template-columns:1fr 1fr}
+    .spec{padding:18px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+    .spec:nth-child(even){border-right:none}
+    .spec:nth-last-child(-n+2){border-bottom:none}
+    .spec .v{font-size:17px}
+    .solution{padding:40px 0;gap:28px}
+    .sol-head h3{font-size:21px}
+    .sol-problem{padding:14px 16px;font-size:13px}
+    .sol-art{padding:18px}
+    .cap-list li{padding:12px 0;gap:12px}
+    .approach{margin-top:48px;padding-top:40px;gap:28px}
+    .approach-step h4{font-size:19px}
+    .roadmap{margin-top:8px}
+    .road-row{padding:22px 0;gap:8px}
+    .road-what h4{font-size:17px}
+    .about-grid{gap:32px}
+    .about-block h3{font-size:21px}
+    .team{margin-top:48px;padding-top:40px}
+    .team-card{padding:24px}
+    .team-mono{width:52px;height:52px;font-size:18px}
+    .team-info h4{font-size:19px}
+    .contact-grid{gap:32px}
+    .contact-detail{grid-template-columns:90px 1fr;padding:12px 0;font-size:13px}
+    .copy-btn{width:100%;justify-content:center}
+    .field input,.field select,.field textarea{font-size:14px;padding:11px 12px}
+    .footer-grid{gap:28px}
+    .footer-brand p{font-size:12px}
+    .footer-col h5{margin-bottom:12px}
+    .footer-bottom{flex-direction:column;gap:8px;align-items:flex-start}
+  }
+  @media (max-width:400px){
+    .wrap{padding:0 14px}
+    .nav{padding:10px 14px}
+    .hero-art{max-width:260px}
+    .stats{grid-template-columns:1fr}
+    .stat{border-right:none !important;border-bottom:1px solid var(--rule) !important}
+    .stat:last-child{border-bottom:none !important}
+    .spec-strip{grid-template-columns:1fr}
+    .spec{border-right:none !important}
+    .spec:not(:last-child){border-bottom:1px solid var(--rule) !important}
+  }
+
+  /* small helpers */
+  .mono{font-family:'IBM Plex Mono',monospace}
+  .amber{color:var(--amber)}
+  .dim{color:var(--paper-dim)}
+  .hr-amber{height:1px;background:linear-gradient(90deg,var(--amber),transparent);border:none;margin:48px 0}
+
+  /* Illustrative tag */
+  .illus-tag{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--paper-dim);letter-spacing:0.08em;margin-top:12px;font-style:italic}
+
+  /* Tech specs grid on home */
+  .spec-strip{
+    display:grid;grid-template-columns:1fr;gap:0;
+    border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+    margin:72px 0;
+  }
+  @media(min-width:760px){.spec-strip{grid-template-columns:repeat(4,1fr)}}
+  .spec{padding:24px;border-right:1px solid var(--rule)}
+  .spec:last-child{border-right:none}
+  .spec .k{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--paper-dim);margin-bottom:8px}
+  .spec .v{font-family:'DM Serif Display',serif;font-size:20px;color:var(--paper);line-height:1.2}
+  .spec .v .sub{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--amber);display:block;margin-top:4px;letter-spacing:0.05em}
+
+  /* Compass rose decoration */
+  .decor-rose{position:absolute;opacity:0.08;pointer-events:none}
+
+  /* Fleet strip */
+  .fleet-strip{
+    margin:72px 0;padding:40px 24px;
+    border:1px solid var(--rule);background:var(--ink-2);
+    display:grid;grid-template-columns:1fr;gap:32px;
+  }
+  @media(min-width:860px){.fleet-strip{grid-template-columns:1fr 1fr}}
+  .fleet-strip h3{margin-bottom:8px}
+  .fleet-strip p{color:var(--paper-dim);font-size:14px}
+  .fleet-strip .fleet-art svg{width:100%;height:auto}
+</style>
+</head>
+<body>
+<a href="#main" class="skip">Skip to content</a>
+
+<header>
+  <div class="nav">
+    <a href="#home" class="wordmark" aria-label="AerOps home">
+      Aer<span class="dot">·</span>Ops
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#home" data-route="home">Home</a>
+      <a href="#solutions" data-route="solutions">Solutions</a>
+      <a href="#about" data-route="about">About</a>
+      <a href="#contact" data-route="contact">Contact</a>
+    </nav>
+    <button class="burger" id="burger" aria-expanded="false" aria-controls="mmenu">Menu</button>
+  </div>
+  <div class="mobile-menu" id="mmenu" role="menu">
+    <a href="#home" role="menuitem">Home</a>
+    <a href="#solutions" role="menuitem">Solutions</a>
+    <a href="#about" role="menuitem">About</a>
+    <a href="#contact" role="menuitem">Contact</a>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ============== HOME ============== -->
+<article class="page" id="page-home" data-route="home">
+
+<section class="hero grid-bg">
+  <div class="wrap">
+    <div class="hero-inner">
+      <div>
+        <div class="eyebrow">AER-OPS · EST. 2026 · AVIATION TECHNOLOGY</div>
+        <h1 class="display">Aviation operations, written down <em>properly</em>.</h1>
+        <p class="lede">
+          We are building tools for the people who keep aircraft flying — material planners, stores, repair managers, operations desks. The data they work with is scattered across spreadsheets, emails and legacy systems. We put it in one place and make it useful.
+        </p>
+        <div class="cta-row">
+          <a href="#solutions" class="btn primary">Explore Solutions <span class="arrow">→</span></a>
+          <a href="#contact" class="btn">Get in Touch</a>
+        </div>
+      </div>
+
+      <div class="hero-art" aria-hidden="true">
+        <!-- Technical hero illustration: aircraft side view with annotations -->
+        <svg viewBox="0 0 560 560" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="dots" width="12" height="12" patternUnits="userSpaceOnUse">
+              <circle cx="1" cy="1" r="0.6" fill="#f1e8d4" opacity="0.2"/>
+            </pattern>
+          </defs>
+          <!-- compass rose background -->
+          <g transform="translate(280,280)" opacity="0.18">
+            <circle r="240" fill="none" stroke="#f1e8d4" stroke-width="0.5"/>
+            <circle r="200" fill="none" stroke="#f1e8d4" stroke-width="0.5" stroke-dasharray="2 4"/>
+            <circle r="160" fill="none" stroke="#f1e8d4" stroke-width="0.5"/>
+            <circle r="110" fill="none" stroke="#d4751f" stroke-width="0.8"/>
+            <g stroke="#f1e8d4" stroke-width="0.5">
+              <line x1="-240" y1="0" x2="240" y2="0"/>
+              <line x1="0" y1="-240" x2="0" y2="240"/>
+              <line x1="-170" y1="-170" x2="170" y2="170"/>
+              <line x1="-170" y1="170" x2="170" y2="-170"/>
+            </g>
+            <!-- cardinal marks -->
+            <g font-family="IBM Plex Mono" font-size="10" fill="#d4751f">
+              <text x="-4" y="-250">N</text>
+              <text x="245" y="4">E</text>
+              <text x="-4" y="258">S</text>
+              <text x="-258" y="4">W</text>
+            </g>
+            <!-- degree ticks -->
+            <g stroke="#f1e8d4" stroke-width="0.5">
+              <line x1="0" y1="-240" x2="0" y2="-230"/>
+              <line x1="0" y1="240" x2="0" y2="230"/>
+              <line x1="-240" y1="0" x2="-230" y2="0"/>
+              <line x1="240" y1="0" x2="230" y2="0"/>
+            </g>
+          </g>
+
+          <!-- aircraft side view -->
+          <g transform="translate(80,220)" stroke="#f1e8d4" stroke-width="1.2" fill="none">
+            <!-- fuselage -->
+            <path d="M 20 60 Q 30 48 60 44 L 340 42 Q 380 44 400 56 L 400 72 Q 380 84 340 86 L 60 84 Q 30 80 20 68 Z"/>
+            <!-- nose cone detail -->
+            <path d="M 20 60 Q 10 64 10 64 Q 10 64 20 68" stroke="#d4751f"/>
+            <!-- cockpit windows -->
+            <path d="M 30 56 L 55 50 L 70 54 L 60 60 Z" stroke="#d4751f" fill="rgba(212,117,31,0.15)"/>
+            <!-- windows row -->
+            <g stroke="#f1e8d4" stroke-width="0.6">
+              <circle cx="100" cy="60" r="2"/><circle cx="115" cy="60" r="2"/>
+              <circle cx="130" cy="60" r="2"/><circle cx="145" cy="60" r="2"/>
+              <circle cx="160" cy="60" r="2"/><circle cx="175" cy="60" r="2"/>
+              <circle cx="190" cy="60" r="2"/><circle cx="205" cy="60" r="2"/>
+              <circle cx="220" cy="60" r="2"/><circle cx="235" cy="60" r="2"/>
+              <circle cx="250" cy="60" r="2"/><circle cx="265" cy="60" r="2"/>
+              <circle cx="280" cy="60" r="2"/><circle cx="295" cy="60" r="2"/>
+              <circle cx="310" cy="60" r="2"/><circle cx="325" cy="60" r="2"/>
+            </g>
+            <!-- door marks -->
+            <rect x="78" y="54" width="6" height="12" stroke="#d4751f"/>
+            <rect x="298" y="54" width="6" height="12" stroke="#d4751f"/>
+            <!-- wing (visible lower) -->
+            <path d="M 150 84 L 100 130 L 240 130 L 230 84"/>
+            <!-- engine nacelle -->
+            <ellipse cx="170" cy="118" rx="22" ry="10" stroke="#d4751f"/>
+            <line x1="170" y1="108" x2="170" y2="128" stroke="#d4751f" stroke-width="0.6"/>
+            <!-- tail fin -->
+            <path d="M 360 42 L 380 10 L 395 10 L 400 42"/>
+            <!-- horizontal stabilizer -->
+            <path d="M 375 56 L 395 48 L 410 56 L 395 64 Z"/>
+            <!-- tail markings -->
+            <text x="380" y="30" font-family="IBM Plex Mono" font-size="7" fill="#d4751f">AO</text>
+          </g>
+
+          <!-- annotation lines -->
+          <g stroke="#d4751f" stroke-width="0.7" fill="none" opacity="0.9">
+            <line x1="200" y1="245" x2="200" y2="320"/>
+            <line x1="200" y1="320" x2="260" y2="320"/>
+            <line x1="340" y1="340" x2="340" y2="400"/>
+            <line x1="340" y1="400" x2="420" y2="400"/>
+            <line x1="140" y1="200" x2="140" y2="150"/>
+            <line x1="140" y1="150" x2="80" y2="150"/>
+          </g>
+          <!-- annotation callouts -->
+          <g font-family="IBM Plex Mono" font-size="9" fill="#d4751f">
+            <text x="262" y="316">ATA 32 — Landing Gear</text>
+            <text x="422" y="396">ATA 72 — Engine</text>
+            <text x="12" y="146">ATA 25 — Equipment</text>
+          </g>
+          <!-- dimension bar -->
+          <g stroke="#f1e8d4" stroke-width="0.6" opacity="0.6">
+            <line x1="100" y1="360" x2="480" y2="360"/>
+            <line x1="100" y1="356" x2="100" y2="364"/>
+            <line x1="480" y1="356" x2="480" y2="364"/>
+            <text x="265" y="376" font-family="IBM Plex Mono" font-size="9" fill="#f1e8d4">A320 / 737 class</text>
+          </g>
+
+          <!-- data readout bottom -->
+          <g font-family="IBM Plex Mono" font-size="9" fill="#f1e8d4" opacity="0.7">
+            <text x="40" y="490">SYS.REF</text><text x="100" y="490" fill="#d4751f">AER-OPS-01</text>
+            <text x="40" y="505">BUILD</text><text x="100" y="505" fill="#d4751f">EARLY</text>
+            <text x="40" y="520">SCOPE</text><text x="100" y="520" fill="#d4751f">A320 · 737 FAMILY</text>
+            <text x="300" y="490">STATE</text><text x="360" y="490" fill="#d4751f">PROTOTYPE</text>
+            <text x="300" y="505">FLEET</text><text x="360" y="505" fill="#d4751f">NARROWBODY</text>
+            <text x="300" y="520">OBS</text><text x="360" y="520" fill="#d4751f">ILLUSTRATIVE</text>
+          </g>
+          <!-- corner marks -->
+          <g stroke="#d4751f" stroke-width="1" fill="none">
+            <path d="M 20 20 L 20 36 M 20 20 L 36 20"/>
+            <path d="M 540 20 L 540 36 M 540 20 L 524 20"/>
+            <path d="M 20 540 L 20 524 M 20 540 L 36 540"/>
+            <path d="M 540 540 L 540 524 M 540 540 L 524 540"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <!-- data ticker -->
+    <div class="coord-strip">
+      <span>FOCUS · <strong>NARROWBODY</strong></span>
+      <span>FLEET · <strong>A320NEO / 737MAX</strong></span>
+      <span>STAGE · <strong>EARLY · PROTOTYPE</strong></span>
+      <span>DOMAIN · <strong>AEROPS.SPACE</strong></span>
+      <span>REACH · <strong>CONTACT@AEROPS.SPACE</strong></span>
+    </div>
+  </div>
+</section>
+
+<!-- What we are building -->
+<section>
+  <div class="wrap">
+    <div class="sect-head">
+      <div class="sect-num">§ 01 — Focus Areas</div>
+      <h2>What we're building, in plain language.</h2>
+    </div>
+
+    <div class="focus-list">
+      <div class="focus-row">
+        <div class="idx">A / 01</div>
+        <div>
+          <h3>Supply-chain analytics</h3>
+          <p class="dim">Readable views of consumption, lead times and repair cycles across fleets.</p>
+        </div>
+        <p class="dim">Material planners spend hours stitching together reports from three different systems to answer one question. We want to shorten that loop.</p>
+        <span class="badge CONCEPT">Concept</span>
+      </div>
+      <div class="focus-row">
+        <div class="idx">A / 02</div>
+        <div>
+          <h3>Spare-parts tracking</h3>
+          <p class="dim">A single, honest record of where a rotable is and what its status is.</p>
+        </div>
+        <p class="dim">A removed component leaves the hangar and its status gets rebuilt from email threads. We think it should live in one place with the serial number attached.</p>
+        <span class="badge PROTOTYPE">Prototype</span>
+      </div>
+      <div class="focus-row">
+        <div class="idx">A / 03</div>
+        <div>
+          <h3>Operational tools</h3>
+          <p class="dim">Small, focused tools for the operations desk — AOG triage, loan tracking, repair orders.</p>
+        </div>
+        <p class="dim">Not a platform. Narrow things that solve one problem a planner has at 2am, built close to how the work actually gets done.</p>
+        <span class="badge CONCEPT">Concept</span>
+      </div>
+      <div class="focus-row focus-coming">
+        <div class="idx">A / 04 →</div>
+        <div>
+          <h3>More features coming soon</h3>
+          <p class="dim">We're building in short cycles. See the full roadmap on the Solutions page.</p>
+        </div>
+        <p class="dim">MEL deferral tracker · shop-visit calendar · stock-health alerts · and whatever the people doing the work say they need next.</p>
+        <a href="#solutions" class="badge-link">View roadmap →</a>
+      </div>
+    </div>
+
+    <!-- Instrument-style stat strip -->
+    <div class="stats">
+      <div class="stat">
+        <div class="dial" aria-hidden="true">
+          <svg width="36" height="36" viewBox="0 0 36 36"><circle cx="18" cy="18" r="14" fill="none" stroke="#d4751f" stroke-width="1"/><line x1="18" y1="18" x2="26" y2="10" stroke="#d4751f" stroke-width="1.5"/><circle cx="18" cy="18" r="1.5" fill="#d4751f"/></svg>
+        </div>
+        <div class="lbl">Solution Areas</div>
+        <div class="val">3<span class="unit">units</span></div>
+        <div class="note">Analytics · Parts · Ops</div>
+      </div>
+      <div class="stat">
+        <div class="dial" aria-hidden="true">
+          <svg width="36" height="36" viewBox="0 0 36 36"><circle cx="18" cy="18" r="14" fill="none" stroke="#d4751f" stroke-width="1"/><line x1="18" y1="18" x2="22" y2="6" stroke="#d4751f" stroke-width="1.5"/><circle cx="18" cy="18" r="1.5" fill="#d4751f"/></svg>
+        </div>
+        <div class="lbl">Capabilities Mapped</div>
+        <div class="val">12<span class="unit">items</span></div>
+        <div class="note">See status table</div>
+      </div>
+      <div class="stat">
+        <div class="dial" aria-hidden="true">
+          <svg width="36" height="36" viewBox="0 0 36 36"><circle cx="18" cy="18" r="14" fill="none" stroke="#d4751f" stroke-width="1"/><line x1="18" y1="18" x2="12" y2="8" stroke="#d4751f" stroke-width="1.5"/><circle cx="18" cy="18" r="1.5" fill="#d4751f"/></svg>
+        </div>
+        <div class="lbl">Active Prototypes</div>
+        <div class="val">2<span class="unit">live</span></div>
+        <div class="note">Internal testing</div>
+      </div>
+      <div class="stat">
+        <div class="dial" aria-hidden="true">
+          <svg width="36" height="36" viewBox="0 0 36 36"><circle cx="18" cy="18" r="14" fill="none" stroke="#d4751f" stroke-width="1"/><line x1="18" y1="18" x2="8" y2="20" stroke="#d4751f" stroke-width="1.5"/><circle cx="18" cy="18" r="1.5" fill="#d4751f"/></svg>
+        </div>
+        <div class="lbl">Founded</div>
+        <div class="val">2026<span class="unit">y</span></div>
+        <div class="note">Founder-led</div>
+      </div>
+    </div>
+
+    <!-- Fleet strip -->
+    <div class="fleet-strip">
+      <div>
+        <h3>Who we build for</h3>
+        <p>Operators of narrowbody fleets, their stores and planning teams, and the MROs and repair vendors they work with. The tools we design assume the day-to-day of A320 family and 737 family maintenance — but the ideas carry.</p>
+        <p class="illus-tag">Illustrative scope — not a customer list.</p>
+      </div>
+      <div class="fleet-art" aria-hidden="true">
+        <!-- two aircraft silhouettes side by side -->
+        <svg viewBox="0 0 500 180">
+          <g transform="translate(10,30)" stroke="#d4751f" stroke-width="1" fill="none">
+            <path d="M 10 30 Q 15 25 35 23 L 180 22 Q 205 24 215 30 L 215 38 Q 205 44 180 46 L 35 45 Q 15 43 10 38 Z"/>
+            <path d="M 80 45 L 60 65 L 130 65 L 125 45"/>
+            <ellipse cx="90" cy="60" rx="10" ry="4"/>
+            <path d="M 195 22 L 205 5 L 212 5 L 215 22"/>
+            <path d="M 200 30 L 215 25 L 225 30 L 215 35 Z"/>
+            <text x="80" y="90" font-family="IBM Plex Mono" font-size="9" fill="#f1e8d4">A320 FAMILY</text>
+          </g>
+          <g transform="translate(260,30)" stroke="#f1e8d4" stroke-width="1" fill="none">
+            <path d="M 10 30 Q 15 25 32 23 L 170 22 Q 195 24 205 30 L 205 38 Q 195 44 170 46 L 32 45 Q 15 43 10 38 Z"/>
+            <path d="M 75 45 L 55 65 L 125 65 L 120 45"/>
+            <ellipse cx="85" cy="60" rx="10" ry="4"/>
+            <path d="M 185 22 L 194 5 L 201 5 L 205 22"/>
+            <path d="M 190 30 L 205 25 L 215 30 L 205 35 Z"/>
+            <text x="80" y="90" font-family="IBM Plex Mono" font-size="9" fill="#f1e8d4">737 FAMILY</text>
+          </g>
+          <line x1="20" y1="150" x2="480" y2="150" stroke="#f1e8d4" stroke-width="0.5" opacity="0.4" stroke-dasharray="2 4"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Status at a glance -->
+    <div class="sect-head" style="margin-top:72px">
+      <div class="sect-num">§ 02 — Status Legend</div>
+      <h2>Where things stand.</h2>
+    </div>
+
+    <div class="legend">
+      <div class="item">
+        <span class="badge LIVE">Live</span>
+        <p>Working and usable today.</p>
+      </div>
+      <div class="item">
+        <span class="badge PROTOTYPE">Prototype</span>
+        <p>Functional early version, in internal testing.</p>
+      </div>
+      <div class="item">
+        <span class="badge CONCEPT">Concept</span>
+        <p>Planned or being explored. Not built yet.</p>
+      </div>
+    </div>
+
+    <p class="mono dim" style="font-size:12px;letter-spacing:0.08em;margin-bottom:16px">STATUS · AT · A · GLANCE</p>
+    <div class="status-tbl-wrap">
+      <table class="status-tbl" id="status-table">
+        <thead>
+          <tr>
+            <th>Capability</th>
+            <th>Area</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="status-tbody"></tbody>
+      </table>
+    </div>
+    <p class="illus-tag" id="live-note">Nothing is marked Live yet. We'll update this table as capabilities move to production.</p>
+
+    <!-- Spec strip -->
+    <div class="spec-strip">
+      <div class="spec">
+        <div class="k">Studio</div>
+        <div class="v">AerOps<span class="sub">Est. 2026</span></div>
+      </div>
+      <div class="spec">
+        <div class="k">Scope</div>
+        <div class="v">Operations<span class="sub">Parts · Planning · Ops</span></div>
+      </div>
+      <div class="spec">
+        <div class="k">Focus</div>
+        <div class="v">Narrowbody<span class="sub">A320 · 737</span></div>
+      </div>
+      <div class="spec">
+        <div class="k">Stage</div>
+        <div class="v">Early<span class="sub">Prototype phase</span></div>
+      </div>
+    </div>
+
+    <p class="dim" style="margin-top:48px">If you work in planning, stores, repairs or operations and any of this sounds familiar, write to us at <a class="amber" href="mailto:contact@aerops.space">contact@aerops.space</a>.</p>
+  </div>
+</section>
+</article>
+
+<!-- ============== SOLUTIONS ============== -->
+<article class="page" id="page-solutions" data-route="solutions">
+<section class="grid-bg">
+  <div class="wrap">
+    <div class="sect-head">
+      <div class="sect-num">§ Solutions</div>
+      <h2>Three areas we're working on.</h2>
+    </div>
+
+    <!-- SOLUTION 1 -->
+    <div class="solution">
+      <div>
+        <div class="sol-head">
+          <h3>Supply-chain analytics</h3>
+          <span class="badge CONCEPT" data-sol="analytics">Concept</span>
+        </div>
+        <div class="sol-problem">
+          <strong>Problem it addresses.</strong> Planners stitch together consumption, lead-time and repair-cycle data from several systems to answer a single demand question. Each answer takes hours and the trail isn't reusable.
+        </div>
+        <div class="sol-section-title">Capabilities</div>
+        <ul class="cap-list" data-cap-area="analytics"></ul>
+      </div>
+      <div class="sol-art" data-fig="FIG · 01 — Rotable Lifecycle">
+        <svg viewBox="0 0 500 340">
+          <defs>
+            <marker id="arr1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#d4751f"/>
+            </marker>
+          </defs>
+          <!-- stations -->
+          <g font-family="IBM Plex Mono" font-size="10" fill="#f1e8d4" stroke="#f1e8d4" fill-opacity="1" stroke-opacity="1">
+            <g stroke-width="1" fill="none">
+              <rect x="30" y="40" width="100" height="56" stroke="#f1e8d4"/>
+              <rect x="200" y="40" width="100" height="56" stroke="#d4751f"/>
+              <rect x="370" y="40" width="100" height="56" stroke="#f1e8d4"/>
+              <rect x="30" y="220" width="100" height="56" stroke="#f1e8d4"/>
+              <rect x="200" y="220" width="100" height="56" stroke="#d4751f"/>
+              <rect x="370" y="220" width="100" height="56" stroke="#f1e8d4"/>
+            </g>
+            <text x="80" y="62" text-anchor="middle">AIRCRAFT</text>
+            <text x="80" y="80" text-anchor="middle" fill="#b8a98a">on-wing</text>
+            <text x="250" y="62" text-anchor="middle" fill="#d4751f">REMOVAL</text>
+            <text x="250" y="80" text-anchor="middle" fill="#b8a98a">U/S tag</text>
+            <text x="420" y="62" text-anchor="middle">STORES</text>
+            <text x="420" y="80" text-anchor="middle" fill="#b8a98a">GRN · bin</text>
+            <text x="80" y="242" text-anchor="middle">SERVICEABLE</text>
+            <text x="80" y="260" text-anchor="middle" fill="#b8a98a">bin · ready</text>
+            <text x="250" y="242" text-anchor="middle" fill="#d4751f">REPAIR</text>
+            <text x="250" y="260" text-anchor="middle" fill="#b8a98a">vendor</text>
+            <text x="420" y="242" text-anchor="middle">SHIP OUT</text>
+            <text x="420" y="260" text-anchor="middle" fill="#b8a98a">repair order</text>
+          </g>
+          <!-- arrows -->
+          <g stroke="#d4751f" stroke-width="1.2" fill="none" marker-end="url(#arr1)">
+            <line x1="130" y1="68" x2="195" y2="68"/>
+            <line x1="300" y1="68" x2="365" y2="68"/>
+            <line x1="420" y1="100" x2="420" y2="215"/>
+            <line x1="370" y1="248" x2="305" y2="248"/>
+            <line x1="200" y1="248" x2="135" y2="248"/>
+            <line x1="80" y1="220" x2="80" y2="100"/>
+          </g>
+          <!-- Legend / annotations -->
+          <g font-family="IBM Plex Mono" font-size="9" fill="#b8a98a">
+            <text x="30" y="320">PN · SN pair tracked at every step · ATA chapter noted at removal</text>
+          </g>
+          <!-- Tick marks for scale -->
+          <g stroke="#f1e8d4" stroke-width="0.4" opacity="0.3">
+            <line x1="20" y1="20" x2="480" y2="20"/>
+            <line x1="20" y1="300" x2="480" y2="300"/>
+          </g>
+        </svg>
+        <p class="caption">Illustrative — not real data. Flow shows a typical rotable loop.</p>
+      </div>
+    </div>
+
+    <!-- SOLUTION 2 -->
+    <div class="solution reverse">
+      <div>
+        <div class="sol-head">
+          <h3>Spare-parts tracking</h3>
+          <span class="badge PROTOTYPE" data-sol="parts">Prototype</span>
+        </div>
+        <div class="sol-problem">
+          <strong>Problem it addresses.</strong> A removed component leaves the hangar and its status gets rebuilt from email threads. By the time anyone asks "where is tail X's APU valve", the trail is in six places.
+        </div>
+        <div class="sol-section-title">Capabilities</div>
+        <ul class="cap-list" data-cap-area="parts"></ul>
+      </div>
+      <div class="sol-art" data-fig="FIG · 02 — Data Flow">
+        <svg viewBox="0 0 500 340">
+          <defs>
+            <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#d4751f"/>
+            </marker>
+          </defs>
+          <!-- central record -->
+          <g>
+            <rect x="190" y="140" width="120" height="60" fill="none" stroke="#d4751f" stroke-width="1.4"/>
+            <text x="250" y="162" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#d4751f">PART RECORD</text>
+            <text x="250" y="180" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#b8a98a">PN · SN · ATA</text>
+            <text x="250" y="194" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#b8a98a">status · location</text>
+          </g>
+          <!-- sources -->
+          <g font-family="IBM Plex Mono" font-size="9" fill="#f1e8d4" stroke="#f1e8d4">
+            <g stroke-width="1" fill="none">
+              <rect x="30" y="40" width="100" height="36"/>
+              <rect x="370" y="40" width="100" height="36"/>
+              <rect x="30" y="140" width="100" height="36"/>
+              <rect x="370" y="140" width="100" height="36"/>
+              <rect x="30" y="240" width="100" height="36"/>
+              <rect x="370" y="240" width="100" height="36"/>
+            </g>
+            <text x="80" y="62" text-anchor="middle">MAINT MSG</text>
+            <text x="420" y="62" text-anchor="middle">RECEIVING</text>
+            <text x="80" y="162" text-anchor="middle">STORES</text>
+            <text x="420" y="162" text-anchor="middle">REPAIR VENDOR</text>
+            <text x="80" y="262" text-anchor="middle">LOAN POOL</text>
+            <text x="420" y="262" text-anchor="middle">AOG DESK</text>
+          </g>
+          <!-- arrows into record -->
+          <g stroke="#d4751f" stroke-width="1" fill="none" marker-end="url(#arr2)" opacity="0.85">
+            <line x1="130" y1="58" x2="190" y2="150"/>
+            <line x1="370" y1="58" x2="310" y2="150"/>
+            <line x1="130" y1="158" x2="190" y2="168"/>
+            <line x1="370" y1="158" x2="310" y2="168"/>
+            <line x1="130" y1="258" x2="190" y2="190"/>
+            <line x1="370" y1="258" x2="310" y2="190"/>
+          </g>
+          <text x="20" y="320" font-family="IBM Plex Mono" font-size="9" fill="#b8a98a">One record. Six sources update it. Everyone reads the same line.</text>
+        </svg>
+        <p class="caption">Illustrative — not real data. Shape of a part-record hub.</p>
+      </div>
+    </div>
+
+    <!-- SOLUTION 3 -->
+    <div class="solution">
+      <div>
+        <div class="sol-head">
+          <h3>Operational tools</h3>
+          <span class="badge CONCEPT" data-sol="tools">Concept</span>
+        </div>
+        <div class="sol-problem">
+          <strong>Problem it addresses.</strong> Operations desks juggle MEL deferrals, AOG events, loan returns and shop visits in parallel. Context lives in heads and chat threads.
+        </div>
+        <div class="sol-section-title">Capabilities</div>
+        <ul class="cap-list" data-cap-area="tools"></ul>
+      </div>
+      <div class="sol-art" data-fig="FIG · 03 — AOG Timeline">
+        <svg viewBox="0 0 500 340">
+          <!-- timeline -->
+          <line x1="30" y1="170" x2="470" y2="170" stroke="#f1e8d4" stroke-width="1"/>
+          <!-- hour marks -->
+          <g stroke="#f1e8d4" stroke-width="0.6" opacity="0.6">
+            <line x1="60" y1="166" x2="60" y2="174"/>
+            <line x1="130" y1="166" x2="130" y2="174"/>
+            <line x1="200" y1="166" x2="200" y2="174"/>
+            <line x1="270" y1="166" x2="270" y2="174"/>
+            <line x1="340" y1="166" x2="340" y2="174"/>
+            <line x1="410" y1="166" x2="410" y2="174"/>
+          </g>
+          <g font-family="IBM Plex Mono" font-size="9" fill="#b8a98a">
+            <text x="54" y="190">T+0</text>
+            <text x="120" y="190">T+2h</text>
+            <text x="190" y="190">T+6h</text>
+            <text x="260" y="190">T+12h</text>
+            <text x="330" y="190">T+24h</text>
+            <text x="402" y="190">T+48h</text>
+          </g>
+          <!-- events above line -->
+          <g>
+            <circle cx="60" cy="170" r="6" fill="#c94a2a" stroke="none"/>
+            <line x1="60" y1="160" x2="60" y2="110" stroke="#c94a2a" stroke-width="0.8"/>
+            <text x="60" y="100" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#c94a2a">AOG DECLARED</text>
+            <text x="60" y="86" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="#b8a98a">tail VT-XX · ATA 29</text>
+
+            <circle cx="130" cy="170" r="5" fill="none" stroke="#d4751f" stroke-width="1.2"/>
+            <line x1="130" y1="160" x2="130" y2="130" stroke="#d4751f" stroke-width="0.8"/>
+            <text x="130" y="124" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#d4751f">PART ID</text>
+
+            <circle cx="270" cy="170" r="5" fill="none" stroke="#d4751f" stroke-width="1.2"/>
+            <line x1="270" y1="160" x2="270" y2="130" stroke="#d4751f" stroke-width="0.8"/>
+            <text x="270" y="124" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#d4751f">LOAN ARR.</text>
+
+            <circle cx="410" cy="170" r="6" fill="#6b8e4e" stroke="none"/>
+            <line x1="410" y1="160" x2="410" y2="110" stroke="#6b8e4e" stroke-width="0.8"/>
+            <text x="410" y="100" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#6b8e4e">RELEASED</text>
+            <text x="410" y="86" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="#b8a98a">return to service</text>
+          </g>
+          <!-- events below line -->
+          <g>
+            <line x1="200" y1="180" x2="200" y2="230" stroke="#f1e8d4" stroke-width="0.8" opacity="0.7"/>
+            <text x="200" y="246" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#f1e8d4" opacity="0.8">RO raised</text>
+            <text x="200" y="258" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="#b8a98a">vendor dispatched</text>
+
+            <line x1="340" y1="180" x2="340" y2="230" stroke="#f1e8d4" stroke-width="0.8" opacity="0.7"/>
+            <text x="340" y="246" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#f1e8d4" opacity="0.8">U/S shipped</text>
+            <text x="340" y="258" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="#b8a98a">to repair shop</text>
+          </g>
+          <text x="30" y="300" font-family="IBM Plex Mono" font-size="9" fill="#b8a98a">Timeline reconstructed from a real pattern — hours shown are indicative only.</text>
+        </svg>
+        <p class="caption">Illustrative — not real data. One tail, one AOG, from call to release.</p>
+      </div>
+    </div>
+
+    <!-- How we approach it -->
+    <div class="sect-head" style="margin-top:40px">
+      <div class="sect-num">§ Method</div>
+      <h2>How we approach it.</h2>
+    </div>
+
+    <div class="approach">
+      <div class="approach-step">
+        <div class="num">01 / Understand</div>
+        <h4>The operation first</h4>
+        <p>We spend time with the people who do the work. The spreadsheet they actually use. The email thread that solves the problem. The reason the official system is being bypassed.</p>
+      </div>
+      <div class="approach-step">
+        <div class="num">02 / Prototype</div>
+        <h4>Build the narrow thing</h4>
+        <p>A small, usable tool that handles one real case. Not a platform. Not a dashboard with ten tabs. Something that fits into a planner's day without asking them to change it.</p>
+      </div>
+      <div class="approach-step">
+        <div class="num">03 / Refine</div>
+        <h4>With feedback, in the loop</h4>
+        <p>Short cycles. We watch how the prototype gets used, what gets ignored, what gets requested. We cut, rename and rework, then do it again.</p>
+      </div>
+    </div>
+
+    <!-- Roadmap -->
+    <div class="sect-head" style="margin-top:88px">
+      <div class="sect-num">§ Roadmap</div>
+      <h2>What's next.</h2>
+    </div>
+
+    <div class="roadmap">
+      <div class="road-row">
+        <div class="road-when">Q4 · 2026</div>
+        <div class="road-what">
+          <h4>Rotable tracking v1</h4>
+          <p>First usable version of the part record. Removal, GRN, repair-order and loan events tied to a single PN/SN view.</p>
+        </div>
+        <span class="badge PROTOTYPE">Prototype</span>
+      </div>
+      <div class="road-row">
+        <div class="road-when">Q1 · 2027</div>
+        <div class="road-what">
+          <h4>Consumption analytics</h4>
+          <p>Readable views of consumption and lead-time patterns by ATA chapter and vendor, drawn from the same underlying record.</p>
+        </div>
+        <span class="badge CONCEPT">Concept</span>
+      </div>
+      <div class="road-row">
+        <div class="road-when">Q2 · 2027</div>
+        <div class="road-what">
+          <h4>AOG triage board</h4>
+          <p>A narrow desk tool for operations: live AOGs, part identification, loan status and shop-visit timing in one view.</p>
+        </div>
+        <span class="badge CONCEPT">Concept</span>
+      </div>
+      <div class="road-row">
+        <div class="road-when">Beyond</div>
+        <div class="road-what">
+          <h4>More features coming soon</h4>
+          <p>MEL deferral tracking, repair-order dashboard, stock-health alerts and the parts of the operation that still live in email threads.</p>
+        </div>
+        <span class="badge CONCEPT">Exploring</span>
+      </div>
+    </div>
+  </div>
+</section>
+</article>
+
+<!-- ============== ABOUT ============== -->
+<article class="page" id="page-about" data-route="about">
+<section>
+  <div class="wrap">
+    <div class="sect-head">
+      <div class="sect-num">§ About</div>
+      <h2>Early-stage, founder-led, aviation-first.</h2>
+    </div>
+
+    <div class="about-grid">
+      <div class="about-block">
+        <span class="tag">01 / Vision</span>
+        <h3>What we want to see.</h3>
+        <p>Aviation operations run on a lot of institutional memory and a lot of workarounds. The data exists — it is just scattered across systems and inboxes. The vision is simple: the people who plan, buy, repair and dispatch should be able to see the same picture, at the same time, with the serial number attached.</p>
+      </div>
+      <div class="about-block">
+        <span class="tag">02 / Mission</span>
+        <h3>What we're doing about it.</h3>
+        <p>Designing and building small, specific tools alongside operators. Honest about what works today, what is in prototype, and what is still a sketch. We'd rather release one well-fitted tool than a long roadmap of promises.</p>
+      </div>
+      <div class="about-block">
+        <span class="tag">03 / Focus</span>
+        <h3>Where our attention is now.</h3>
+        <p>Narrowbody fleets — A320 family and 737 family. Material planning, stores, rotable tracking and operations-desk tools. We're learning in the open with people who do this work every day.</p>
+      </div>
+      <div class="about-block">
+        <span class="tag">04 / Honesty</span>
+        <h3>What we're not.</h3>
+        <p>No customers to name. No airline logos to list. No funding rounds, no certifications, no approvals. If someone shows you a page like this with those things on it at this stage, be suspicious. We're early, and we think the work is more interesting that way.</p>
+      </div>
+    </div>
+
+    <hr class="hr-amber">
+
+    <!-- FOUNDING TEAM -->
+    <div class="team">
+      <div class="sect-head" style="margin-bottom:0">
+        <div class="sect-num">§ Team</div>
+        <h2>Who's building it.</h2>
+      </div>
+      <p class="dim" style="max-width:60ch;margin-top:24px">A small founding team with backgrounds split across aviation operations and software engineering. We work closely with practitioners in planning, stores and operations desks.</p>
+
+      <div class="team-grid" id="team-grid"></div>
+
+      <p class="illus-tag" style="margin-top:32px">More team members joining soon.</p>
+    </div>
+
+  </div>
+</section>
+</article>
+
+<!-- ============== CONTACT ============== -->
+<article class="page" id="page-contact" data-route="contact">
+<section>
+  <div class="wrap">
+    <div class="sect-head">
+      <div class="sect-num">§ Contact</div>
+      <h2>Write to us.</h2>
+    </div>
+
+    <div class="contact-grid">
+      <div class="contact-info">
+        <h3>Direct channels.</h3>
+        <p>If you work in aviation operations, planning, stores, repairs or MRO technology, we would like to hear from you. The form opens your email app with a pre-filled message — nothing is sent or stored by this page.</p>
+
+        <div class="contact-detail">
+          <span class="k">Email</span>
+          <a id="direct-email" class="amber mono" href="mailto:contact@aerops.space">contact@aerops.space</a>
+        </div>
+        <div class="contact-detail">
+          <span class="k">Domain</span>
+          <span class="mono" id="direct-domain">aerops.space</span>
+        </div>
+        <div class="contact-detail">
+          <span class="k">Response</span>
+          <span class="mono">Usually within 48 hours</span>
+        </div>
+        <div class="contact-detail">
+          <span class="k">Stage</span>
+          <span class="mono">Early · open to conversation</span>
+        </div>
+
+        <button class="btn primary copy-btn" id="copy-email" type="button">Copy Email <span class="arrow">⎘</span></button>
+      </div>
+
+      <form id="contact-form" novalidate>
+        <div class="form-row">
+          <div class="field">
+            <label for="f-name">Name</label>
+            <input type="text" id="f-name" name="name" required>
+            <span class="err-msg">Please enter your name.</span>
+          </div>
+          <div class="field">
+            <label for="f-email">Work Email</label>
+            <input type="email" id="f-email" name="email" required>
+            <span class="err-msg">Please enter a valid email.</span>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="f-company">Company</label>
+            <input type="text" id="f-company" name="company">
+            <span class="err-msg"></span>
+          </div>
+          <div class="field">
+            <label for="f-area">Area of Interest</label>
+            <select id="f-area" name="area" required>
+              <option value="">— Select —</option>
+              <option>Supply-chain analytics</option>
+              <option>Spare-parts tracking</option>
+              <option>Operational tools</option>
+              <option>Something else</option>
+            </select>
+            <span class="err-msg">Please choose an area.</span>
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-msg">Message</label>
+          <textarea id="f-msg" name="message" required placeholder="What are you working on? What's a problem you'd want help thinking through?"></textarea>
+          <span class="err-msg">Please write a short message.</span>
+        </div>
+        <div class="form-note">
+          This form opens your email app. No data is stored on this site.
+        </div>
+        <div class="cta-row">
+          <button type="submit" class="btn primary">Open Email App <span class="arrow">→</span></button>
+          <button type="button" class="btn" id="copy-msg">Copy Message</button>
+        </div>
+        <div class="confirm" id="confirm" role="status" aria-live="polite">
+          Your email app should have opened with a draft. Nothing was sent by this page.
+          <br><button type="button" id="dismiss-confirm">Dismiss</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+</article>
+
+<!-- ============== PRIVACY ============== -->
+<article class="page" id="page-privacy" data-route="privacy">
+<section>
+  <div class="wrap">
+    <div class="sect-head">
+      <div class="sect-num">§ Privacy</div>
+      <h2>Privacy policy.</h2>
+    </div>
+
+    <div class="privacy">
+      <div class="meta">LAST UPDATED · <span id="privacy-date">OCTOBER 10, 2026</span></div>
+      <p>This site is static. It has no backend, no accounts, no login, no database.</p>
+
+      <h3>What we collect</h3>
+      <p>Nothing is submitted to or stored by this site. The contact form validates your entries locally and then opens your own email application with a pre-filled message. We only receive what you then choose to send from your email app.</p>
+
+      <h3>Cookies and tracking</h3>
+      <p>No cookies are set by default. No analytics scripts are included at the time of this update. If analytics are added later, this policy will be updated and the specific service and what it collects will be named here.</p>
+
+      <h3>Fonts</h3>
+      <p>This site loads fonts from Google Fonts. Google may receive your IP address and basic request information when fonts load. This is standard for sites using the Google Fonts service.</p>
+
+      <h3>Data contact</h3>
+      <p>For any question about this policy, write to <a class="amber" href="mailto:contact@aerops.space" id="privacy-email">contact@aerops.space</a>.</p>
+
+      <h3>Changes</h3>
+      <p>This policy will be revised as the site evolves. The last updated date above reflects the most recent revision.</p>
+    </div>
+  </div>
+</section>
+</article>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="wordmark">Aer<span class="dot">·</span>Ops</div>
+        <p>Aviation operations and technology — built for the people who keep narrowbody fleets flying.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Site</h5>
+        <a href="#home">Home</a>
+        <a href="#solutions">Solutions</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h5>Reach</h5>
+        <a href="mailto:contact@aerops.space" id="footer-email">contact@aerops.space</a>
+        <a href="#" id="footer-domain">aerops.space</a>
+        <a href="#privacy">Privacy</a>
+      </div>
+      <div class="footer-col">
+        <h5>Status</h5>
+        <a href="#home">Early-stage</a>
+        <a href="#home">Prototype phase</a>
+        <a href="#home">Open to conversation</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 AerOps · All rights reserved</span>
+      <span>AEROPS.SPACE / EARLY-STAGE / 2026</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* =======================================================
+   CONFIG — edit values here to update across the site.
+   ======================================================= */
+var CONFIG = {
+  email: 'contact@aerops.space',
+  domain: 'aerops.space',
+  updatedDate: 'October 10, 2026',
+  tiers: {
+    LIVE:      { label: 'Live',      note: 'Working and usable today' },
+    PROTOTYPE: { label: 'Prototype', note: 'Functional early version, in internal testing' },
+    CONCEPT:   { label: 'Concept',   note: 'Planned or being explored. Not built yet' }
+  },
+  team: [
+    {
+      name: 'Maruvada Sriram',
+      initials: 'MS',
+      title: 'Co-Founder & CTO',
+      bio: 'Technology lead. Focuses on the data model, the stack, and the parts of the product that keep working when the hangar does not.',
+      email: 'maruvadasriram3@gmail.com',
+      linkedin: null
+    }
+  ],
+  solutions: {
+    analytics: {
+      name: 'Supply-chain analytics',
+      status: 'CONCEPT',
+      capabilities: [
+        { name: 'Consumption trends by ATA chapter',   status: 'CONCEPT' },
+        { name: 'Lead-time patterns by vendor',         status: 'CONCEPT' },
+        { name: 'Repair-cycle view by PN',              status: 'CONCEPT' },
+        { name: 'Stock health against reorder points',  status: 'CONCEPT' }
+      ]
+    },
+    parts: {
+      name: 'Spare-parts tracking',
+      status: 'PROTOTYPE',
+      capabilities: [
+        { name: 'Rotable record (PN · SN · status)',    status: 'PROTOTYPE' },
+        { name: 'Removal → repair → return loop',       status: 'PROTOTYPE' },
+        { name: 'Loan tracking with return dates',      status: 'CONCEPT' },
+        { name: 'U/S queue by shop and age',            status: 'CONCEPT' }
+      ]
+    },
+    tools: {
+      name: 'Operational tools',
+      status: 'CONCEPT',
+      capabilities: [
+        { name: 'AOG triage board',                     status: 'CONCEPT' },
+        { name: 'MEL deferral tracker',                 status: 'CONCEPT' },
+        { name: 'Repair-order dashboard',               status: 'CONCEPT' },
+        { name: 'Shop-visit calendar',                  status: 'CONCEPT' }
+      ]
+    }
+  }
+};
+
+/* =======================================================
+   Build dynamic content from CONFIG
+   ======================================================= */
+function makeBadge(key){
+  var b = document.createElement('span');
+  b.className = 'badge ' + key;
+  b.textContent = CONFIG.tiers[key].label;
+  return b;
+}
+
+function buildStatusTable(){
+  var tbody = document.getElementById('status-tbody');
+  if (!tbody) return;
+  var liveCount = 0;
+  Object.keys(CONFIG.solutions).forEach(function(k){
+    var area = CONFIG.solutions[k];
+    area.capabilities.forEach(function(cap){
+      if (cap.status === 'LIVE') liveCount++;
+      var tr = document.createElement('tr');
+      var td1 = document.createElement('td'); td1.className='cap'; td1.textContent = cap.name;
+      var td2 = document.createElement('td'); td2.className='area'; td2.textContent = area.name;
+      var td3 = document.createElement('td'); td3.appendChild(makeBadge(cap.status));
+      tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
+      tbody.appendChild(tr);
+    });
+  });
+  if (liveCount > 0) {
+    document.getElementById('live-note').textContent = liveCount + ' capability(ies) marked Live.';
+  }
+}
+
+function buildSolutionCaps(){
+  Object.keys(CONFIG.solutions).forEach(function(k){
+    var ul = document.querySelector('[data-cap-area="'+k+'"]');
+    if (!ul) return;
+    CONFIG.solutions[k].capabilities.forEach(function(cap){
+      var li = document.createElement('li');
+      var span = document.createElement('span'); span.className='cap-name'; span.textContent = cap.name;
+      li.appendChild(span); li.appendChild(makeBadge(cap.status));
+      ul.appendChild(li);
+    });
+    // trailing "more features coming soon" row
+    var li = document.createElement('li');
+    li.className = 'cap-coming';
+    li.innerHTML = '<span class="cap-coming-text">More features coming soon</span><span class="cap-coming-tick">+ · · ·</span>';
+    ul.appendChild(li);
+    // header badge
+    var head = document.querySelector('[data-sol="'+k+'"]');
+    if (head) {
+      head.className = 'badge ' + CONFIG.solutions[k].status;
+      head.textContent = CONFIG.tiers[CONFIG.solutions[k].status].label;
+    }
+  });
+}
+
+function buildTeam(){
+  var grid = document.getElementById('team-grid');
+  if (!grid) return;
+  CONFIG.team.forEach(function(m){
+    var card = document.createElement('div'); card.className = 'team-card';
+    var ident = document.createElement('div'); ident.className = 'team-ident';
+    var mono = document.createElement('div'); mono.className = 'team-mono'; mono.textContent = m.initials;
+    var info = document.createElement('div'); info.className = 'team-info';
+    var h = document.createElement('h4'); h.textContent = m.name;
+    var r = document.createElement('div'); r.className = 'role'; r.textContent = m.title;
+    info.appendChild(h); info.appendChild(r);
+    ident.appendChild(mono); ident.appendChild(info);
+    card.appendChild(ident);
+    var bio = document.createElement('p'); bio.className='team-bio'; bio.textContent = m.bio;
+    card.appendChild(bio);
+    var links = document.createElement('div'); links.className = 'team-links';
+    if (m.email){
+      var e = document.createElement('a'); e.href = 'mailto:'+m.email; e.textContent = '✉ ' + m.email;
+      links.appendChild(e);
+    }
+    if (m.linkedin){
+      var l = document.createElement('a'); l.href = m.linkedin; l.target = '_blank'; l.rel='noopener'; l.textContent = '↗ LinkedIn';
+      links.appendChild(l);
+    }
+    card.appendChild(links);
+    grid.appendChild(card);
+  });
+}
+
+function applyConfig(){
+  document.getElementById('direct-email').textContent = CONFIG.email;
+  document.getElementById('direct-email').href = 'mailto:' + CONFIG.email;
+  document.getElementById('direct-domain').textContent = CONFIG.domain;
+  document.getElementById('footer-email').textContent = CONFIG.email;
+  document.getElementById('footer-email').href = 'mailto:' + CONFIG.email;
+  document.getElementById('footer-domain').textContent = CONFIG.domain;
+  document.getElementById('privacy-date').textContent = CONFIG.updatedDate.toUpperCase();
+  document.getElementById('privacy-email').textContent = CONFIG.email;
+  document.getElementById('privacy-email').href = 'mailto:' + CONFIG.email;
+}
+
+/* =======================================================
+   Hash routing
+   ======================================================= */
+var pages = ['home','solutions','about','contact','privacy'];
+var titles = {
+  home:      'AerOps — Aviation operations and technology',
+  solutions: 'Solutions — AerOps',
+  about:     'About — AerOps',
+  contact:   'Contact — AerOps',
+  privacy:   'Privacy Policy — AerOps'
+};
+var descs = {
+  home:      'AerOps is an early-stage aviation operations studio building supply-chain analytics, spare-parts tracking and operational tools.',
+  solutions: 'Three focus areas: supply-chain analytics, spare-parts tracking and operational tools for narrowbody fleets.',
+  about:     'Early-stage, founder-led. Vision, mission and current focus of the AerOps team.',
+  contact:   'Write to us. Contact AerOps about aviation operations and technology.',
+  privacy:   'Privacy policy for the AerOps static site.'
+};
+
+function route(){
+  var hash = (window.location.hash || '#home').replace('#','');
+  if (pages.indexOf(hash) === -1) hash = 'home';
+  pages.forEach(function(p){
+    var el = document.getElementById('page-'+p);
+    if (el) el.classList.toggle('active', p === hash);
+  });
+  document.querySelectorAll('.nav-links a, .mobile-menu a').forEach(function(a){
+    var r = (a.getAttribute('href') || '').replace('#','');
+    a.classList.toggle('active', r === hash);
+  });
+  document.title = titles[hash];
+  var meta = document.querySelector('meta[name="description"]');
+  if (meta) meta.setAttribute('content', descs[hash]);
+  window.scrollTo({top:0,behavior:'instant'});
+  // close mobile menu
+  var mm = document.getElementById('mmenu');
+  if (mm) mm.classList.remove('open');
+  var bg = document.getElementById('burger');
+  if (bg) bg.setAttribute('aria-expanded','false');
+}
+window.addEventListener('hashchange', route);
+
+/* =======================================================
+   Burger menu
+   ======================================================= */
+document.getElementById('burger').addEventListener('click', function(){
+  var m = document.getElementById('mmenu');
+  var open = m.classList.toggle('open');
+  this.setAttribute('aria-expanded', open ? 'true':'false');
+});
+
+/* =======================================================
+   Contact form — validate, open mailto, show confirmation
+   ======================================================= */
+function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+function buildMailto(data){
+  var subject = 'AerOps enquiry · ' + (data.area || 'General');
+  var body =
+    'Name: ' + data.name + '\n' +
+    'Email: ' + data.email + '\n' +
+    'Company: ' + (data.company || '-') + '\n' +
+    'Area of Interest: ' + (data.area || '-') + '\n\n' +
+    'Message:\n' + data.message;
+  return 'mailto:' + CONFIG.email +
+    '?subject=' + encodeURIComponent(subject) +
+    '&body=' + encodeURIComponent(body);
+}
+
+document.getElementById('contact-form').addEventListener('submit', function(e){
+  e.preventDefault();
+  var form = e.target;
+  var ok = true;
+  var fields = ['name','email','area','message'];
+  var data = {};
+  Array.prototype.forEach.call(form.elements, function(el){
+    if (el.name) data[el.name] = el.value.trim();
+  });
+  fields.forEach(function(f){
+    var el = form.elements[f];
+    if (!el) return;
+    var wrap = el.closest('.field');
+    var bad = !el.value.trim();
+    if (f === 'email' && el.value.trim() && !validEmail(el.value.trim())) bad = true;
+    if (wrap) wrap.classList.toggle('err', bad);
+    if (bad) ok = false;
+  });
+  if (!ok) return;
+  var href = buildMailto(data);
+  window.location.href = href;
+  document.getElementById('confirm').classList.add('show');
+});
+
+document.getElementById('dismiss-confirm').addEventListener('click', function(){
+  document.getElementById('confirm').classList.remove('show');
+});
+
+/* Copy message */
+document.getElementById('copy-msg').addEventListener('click', function(){
+  var form = document.getElementById('contact-form');
+  var data = {};
+  Array.prototype.forEach.call(form.elements, function(el){
+    if (el.name) data[el.name] = el.value.trim();
+  });
+  var text =
+    'To: ' + CONFIG.email + '\n' +
+    'Subject: AerOps enquiry · ' + (data.area || 'General') + '\n\n' +
+    'Name: ' + (data.name || '') + '\n' +
+    'Email: ' + (data.email || '') + '\n' +
+    'Company: ' + (data.company || '-') + '\n' +
+    'Area of Interest: ' + (data.area || '-') + '\n\n' +
+    'Message:\n' + (data.message || '');
+  var btn = this;
+  var orig = btn.innerHTML;
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){
+      btn.innerHTML = 'Copied ✓';
+      setTimeout(function(){ btn.innerHTML = orig; }, 2000);
+    }).catch(function(){ fallbackCopy(text, btn, orig); });
+  } else { fallbackCopy(text, btn, orig); }
+});
+
+/* Copy email */
+document.getElementById('copy-email').addEventListener('click', function(){
+  var btn = this;
+  var orig = btn.innerHTML;
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(CONFIG.email).then(function(){
+      btn.innerHTML = 'Copied ✓';
+      setTimeout(function(){ btn.innerHTML = orig; }, 2000);
+    }).catch(function(){ fallbackCopy(CONFIG.email, btn, orig); });
+  } else { fallbackCopy(CONFIG.email, btn, orig); }
+});
+
+function fallbackCopy(text, btn, orig){
+  var ta = document.createElement('textarea');
+  ta.value = text; ta.style.position='fixed'; ta.style.left='-9999px';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); btn.innerHTML = 'Copied ✓'; }
+  catch(e) { btn.innerHTML = 'Copy failed'; }
+  document.body.removeChild(ta);
+  setTimeout(function(){ btn.innerHTML = orig; }, 2000);
+}
+
+/* =======================================================
+   Init
+   ======================================================= */
+applyConfig();
+buildStatusTable();
+buildSolutionCaps();
+buildTeam();
+route();
+</script>
+</body>
+</html>
